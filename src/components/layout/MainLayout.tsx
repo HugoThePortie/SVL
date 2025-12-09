@@ -398,6 +398,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
   const [caseMembers, setCaseMembers] = useState<CaseMember[]>([]);
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [membersDialogOpen, setMembersDialogOpen] = useState(false);
+  const [vehicleRecoveredDialogOpen, setVehicleRecoveredDialogOpen] = useState(false);
   const [newMemberEmail, setNewMemberEmail] = useState('');
   const [attestChecked, setAttestChecked] = useState(false);
   const [filterAnchor, setFilterAnchor] = useState<null | HTMLElement>(null);
@@ -990,6 +991,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           fullWidth
           variant="outlined"
           startIcon={<CheckCircleIcon />}
+          onClick={() => setVehicleRecoveredDialogOpen(true)}
           sx={{
             borderColor: modeColors.border,
             color: modeColors.text.primary,
@@ -1431,6 +1433,56 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
             Close
           </Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Vehicle Recovered Dialog */}
+      <Dialog
+        open={vehicleRecoveredDialogOpen}
+        onClose={() => setVehicleRecoveredDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            backgroundColor: modeColors.background.paper,
+            border: `2px solid #00BFA5`,
+            borderRadius: 3,
+            maxWidth: 400,
+          },
+        }}
+      >
+        <DialogContent sx={{ p: 3 }}>
+          <Typography variant="h5" sx={{ color: modeColors.text.primary, mb: 2 }}>
+            Vehicle Recovered
+          </Typography>
+          <Typography variant="body2" sx={{ color: modeColors.text.secondary, mb: 3 }}>
+            Please confirm this vehicle is recovered. Once you select confirm this case will be closed and unavailable within the system.
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            <Button
+              onClick={() => setVehicleRecoveredDialogOpen(false)}
+              sx={{ color: modeColors.text.secondary }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                // TODO: Handle vehicle recovered confirmation
+                setVehicleRecoveredDialogOpen(false);
+                handleBackToList();
+              }}
+              sx={{
+                backgroundColor: '#00BFA5',
+                color: '#0d1421',
+                borderRadius: 3,
+                px: 3,
+                '&:hover': {
+                  backgroundColor: '#00a893',
+                },
+              }}
+            >
+              Confirm
+            </Button>
+          </Box>
+        </DialogContent>
       </Dialog>
 
       {/* New Case Modal */}
