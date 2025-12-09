@@ -5,13 +5,6 @@ import {
   CardContent,
   Typography,
   Button,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Chip,
-  IconButton,
-  Divider,
   Grid,
 } from '@mui/material';
 import {
@@ -19,13 +12,14 @@ import {
   Add as AddIcon,
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
-  Schedule as ScheduleIcon,
   TrendingUp as TrendingUpIcon,
-  LocationOn as LocationIcon,
+  Download as DownloadIcon,
+  Close as CloseIcon,
   ArrowForward as ArrowForwardIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { colors } from '../../theme/themes';
 
 interface StatCardProps {
   title: string;
@@ -69,52 +63,96 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, subtitle
   </Card>
 );
 
-// Mock data for demonstration
-const mockActiveCases = [
+// Case status types and helpers (matching MainLayout)
+type CaseStatus = 'active' | 'requested' | 'inactive';
+
+const getStatusIcon = (status: CaseStatus) => {
+  switch (status) {
+    case 'active':
+      return <CarIcon sx={{ color: '#49B27E', fontSize: 20 }} />;
+    case 'requested':
+      return <DownloadIcon sx={{ color: '#F5A623', fontSize: 20 }} />;
+    case 'inactive':
+      return <CloseIcon sx={{ color: '#FF5252', fontSize: 20 }} />;
+    default:
+      return <CarIcon sx={{ color: '#49B27E', fontSize: 20 }} />;
+  }
+};
+
+const getStatusColor = (status: CaseStatus) => {
+  switch (status) {
+    case 'active':
+      return '#49B27E';
+    case 'requested':
+      return '#F5A623';
+    case 'inactive':
+      return '#FF5252';
+    default:
+      return '#49B27E';
+  }
+};
+
+const getStatusBgColor = (status: CaseStatus) => {
+  switch (status) {
+    case 'active':
+      return 'rgba(73, 178, 126, 0.15)';
+    case 'requested':
+      return 'rgba(245, 166, 35, 0.15)';
+    case 'inactive':
+      return 'rgba(255, 82, 82, 0.15)';
+    default:
+      return 'rgba(73, 178, 126, 0.15)';
+  }
+};
+
+// Mock data for demonstration (matching MainLayout structure)
+const mockRecentCases = [
   {
     id: '1',
-    caseNumber: 'SVL-2024-001234',
-    vin: '1HGBH41JXMN109186',
-    vehicle: '2023 Honda Accord',
-    status: 'active_search',
-    lastLocation: '123 Main St, Metro City',
-    lastUpdate: '2 min ago',
+    caseNumber: '2021-03-13-002',
+    vehicle: '2021 White Jeep Grand Cherokee',
+    vin: '4Y1SL65848Z411439',
+    status: 'active' as CaseStatus,
+    timeAtLocation: '20+ mins',
   },
   {
     id: '2',
-    caseNumber: 'SVL-2024-001235',
-    vin: '5YJSA1DN5DFP14555',
-    vehicle: '2022 Tesla Model S',
-    status: 'svl_activated',
-    lastLocation: '456 Oak Ave, Metro City',
-    lastUpdate: '15 min ago',
+    caseNumber: '2021-03-14-001',
+    vehicle: '2020 Black BMW X5',
+    vin: '5UXCR6C55KLL12345',
+    status: 'requested' as CaseStatus,
+    timeAtLocation: 'Requested',
   },
   {
     id: '3',
-    caseNumber: 'SVL-2024-001236',
-    vin: 'WVWZZZ3CZWE123456',
-    vehicle: '2021 Volkswagen ID.4',
-    status: 'monitoring',
-    lastLocation: '789 Pine Rd, Metro City',
-    lastUpdate: '1 hour ago',
+    caseNumber: '2021-03-15-003',
+    vehicle: '2022 Red Tesla Model 3',
+    vin: '5YJ3E1EA8NF123456',
+    status: 'active' as CaseStatus,
+    timeAtLocation: '15 mins',
+  },
+  {
+    id: '4',
+    caseNumber: '2021-03-16-004',
+    vehicle: '2019 Silver Honda Accord',
+    vin: '1HGCV1F34KA098765',
+    status: 'inactive' as CaseStatus,
+    timeAtLocation: 'Inactive',
+  },
+  {
+    id: '5',
+    caseNumber: '2021-03-17-005',
+    vehicle: '2023 Blue Ford F-150',
+    vin: '1FTFW1E85NFA54321',
+    status: 'active' as CaseStatus,
+    timeAtLocation: '5 mins',
   },
 ];
-
-const getStatusChip = (status: string) => {
-  const statusConfig: Record<string, { label: string; color: 'success' | 'warning' | 'error' | 'info' }> = {
-    active_search: { label: 'Active Search', color: 'error' },
-    svl_activated: { label: 'SVL Active', color: 'warning' },
-    monitoring: { label: 'Monitoring', color: 'info' },
-    recovered: { label: 'Recovered', color: 'success' },
-  };
-
-  const config = statusConfig[status] || { label: status, color: 'info' };
-  return <Chip label={config.label} color={config.color} size="small" />;
-};
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const modeColors = colors.dark; // Using dark mode colors (dashboard has dark background)
 
   const profileName = user?.profile && 'firstName' in user.profile
     ? user.profile.firstName
@@ -190,91 +228,100 @@ export const DashboardPage: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* Active Cases List */}
-      <Card>
-        <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6" fontWeight="bold">
-              Your Active Cases
+      {/* Most Recent Cases - styled like MainLayout */}
+      <Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" fontWeight="600" sx={{ color: modeColors.text.primary }}>
+            Most Recent Cases
+          </Typography>
+          <Button
+            endIcon={<ArrowForwardIcon />}
+            onClick={() => navigate('/cases')}
+            sx={{ color: '#00BFA5' }}
+          >
+            View All
+          </Button>
+        </Box>
+
+        {/* Cases Grid */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {mockRecentCases.map((caseItem) => (
+            <Box
+              key={caseItem.id}
+              onClick={() => navigate(`/cases/${caseItem.id}`)}
+              sx={{
+                backgroundColor: modeColors.background.card,
+                borderRadius: '10px',
+                p: 2,
+                cursor: 'pointer',
+                border: `1px solid ${modeColors.border}`,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  borderColor: '#00BFA5',
+                  backgroundColor: modeColors.background.cardHover,
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                <Box
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 1.5,
+                    backgroundColor: getStatusBgColor(caseItem.status),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  {getStatusIcon(caseItem.status)}
+                </Box>
+
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: getStatusColor(caseItem.status),
+                      fontWeight: 500,
+                      fontSize: '1.12rem',
+                      mb: 0.5,
+                    }}
+                  >
+                    {caseItem.caseNumber}
+                  </Typography>
+
+                  <Typography variant="caption" sx={{ color: modeColors.text.primary, display: 'block', mb: 0.25 }}>
+                    {caseItem.vehicle}
+                  </Typography>
+
+                  <Typography variant="caption" sx={{ color: modeColors.text.secondary }}>
+                    Time:{' '}
+                    <span style={{ color: getStatusColor(caseItem.status) }}>{caseItem.timeAtLocation}</span>
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+
+        {mockRecentCases.length === 0 && (
+          <Box sx={{ textAlign: 'center', py: 4 }}>
+            <CarIcon sx={{ fontSize: 48, color: modeColors.text.secondary, mb: 2 }} />
+            <Typography variant="body1" sx={{ color: modeColors.text.secondary }}>
+              No recent cases
             </Typography>
             <Button
-              endIcon={<ArrowForwardIcon />}
-              onClick={() => navigate('/cases')}
+              variant="contained"
+              startIcon={<AddIcon />}
+              sx={{ mt: 2, backgroundColor: '#00BFA5', '&:hover': { backgroundColor: '#00a893' } }}
+              onClick={() => navigate('/cases/new')}
             >
-              View All
+              Create New SVL Request
             </Button>
           </Box>
-
-          <List>
-            {mockActiveCases.map((caseItem, index) => (
-              <React.Fragment key={caseItem.id}>
-                {index > 0 && <Divider />}
-                <ListItem
-                  sx={{
-                    cursor: 'pointer',
-                    '&:hover': { backgroundColor: 'grey.50' },
-                    borderRadius: 1,
-                  }}
-                  onClick={() => navigate(`/cases/${caseItem.id}`)}
-                  secondaryAction={
-                    <IconButton edge="end">
-                      <ArrowForwardIcon />
-                    </IconButton>
-                  }
-                >
-                  <ListItemIcon>
-                    <CarIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="subtitle1" fontWeight="medium">
-                          {caseItem.caseNumber}
-                        </Typography>
-                        {getStatusChip(caseItem.status)}
-                      </Box>
-                    }
-                    secondary={
-                      <Box sx={{ mt: 0.5 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          {caseItem.vehicle} • VIN: {caseItem.vin.slice(-8)}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                          <LocationIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                          <Typography variant="caption" color="text.secondary">
-                            {caseItem.lastLocation}
-                          </Typography>
-                          <ScheduleIcon sx={{ fontSize: 14, color: 'text.secondary', ml: 1 }} />
-                          <Typography variant="caption" color="text.secondary">
-                            {caseItem.lastUpdate}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    }
-                  />
-                </ListItem>
-              </React.Fragment>
-            ))}
-          </List>
-
-          {mockActiveCases.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <CarIcon sx={{ fontSize: 48, color: 'grey.400', mb: 2 }} />
-              <Typography variant="body1" color="text.secondary">
-                No active cases
-              </Typography>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                sx={{ mt: 2 }}
-                onClick={() => navigate('/cases/new')}
-              >
-                Create New SVL Request
-              </Button>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
+        )}
+      </Box>
     </Box>
   );
 };
