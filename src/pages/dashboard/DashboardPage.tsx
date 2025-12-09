@@ -159,7 +159,14 @@ export const DashboardPage: React.FC = () => {
     : 'Officer';
 
   return (
-    <Box>
+    <Box
+      sx={{
+        maxWidth: 1200,
+        mx: 'auto',
+        px: 3,
+        py: 2,
+      }}
+    >
       {/* Welcome Header */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
