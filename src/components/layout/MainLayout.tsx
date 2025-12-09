@@ -46,7 +46,6 @@ import {
   ContentCopy as CopyIcon,
   Group as GroupIcon,
   NotificationsOff as NotificationsOffIcon,
-  Error as ErrorIcon,
   CheckCircle as CheckCircleIcon,
   Schedule as ScheduleIcon,
   FilterList as FilterIcon,
@@ -977,12 +976,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
             label="Pause Notifications"
             checked={caseSettings.pauseNotifications}
             onChange={() => handleToggle('pauseNotifications')}
-          />
-          <ToggleRow
-            icon={<ErrorIcon sx={{ fontSize: 18 }} />}
-            label="Bad Vehicle Location"
-            checked={caseSettings.badVehicleLocation}
-            onChange={() => handleToggle('badVehicleLocation')}
           />
         </Box>
 
