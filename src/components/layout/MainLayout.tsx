@@ -30,6 +30,9 @@ import {
   FormControlLabel,
   Popover,
   FormGroup,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -397,7 +400,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
   const [caseMembers, setCaseMembers] = useState<CaseMember[]>([]);
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [membersDialogOpen, setMembersDialogOpen] = useState(false);
-  const [vehicleRecoveredDialogOpen, setVehicleRecoveredDialogOpen] = useState(false);
+  const [closeCaseDialogOpen, setCloseCaseDialogOpen] = useState(false);
+  const [closeCaseReason, setCloseCaseReason] = useState('');
   const [newMemberEmail, setNewMemberEmail] = useState('');
   const [attestChecked, setAttestChecked] = useState(false);
   const [filterAnchor, setFilterAnchor] = useState<null | HTMLElement>(null);
@@ -979,12 +983,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           />
         </Box>
 
-        {/* Vehicle Recovered Button */}
+        {/* Close Case Button */}
         <Button
           fullWidth
           variant="outlined"
           startIcon={<CheckCircleIcon />}
-          onClick={() => setVehicleRecoveredDialogOpen(true)}
+          onClick={() => setCloseCaseDialogOpen(true)}
           sx={{
             borderColor: modeColors.border,
             color: modeColors.text.primary,
@@ -997,7 +1001,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
             },
           }}
         >
-          Vehicle Recovered
+          Close Case
         </Button>
       </Box>
     </Box>
@@ -1428,10 +1432,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
         </DialogActions>
       </Dialog>
 
-      {/* Vehicle Recovered Dialog */}
+      {/* Close Case Dialog */}
       <Dialog
-        open={vehicleRecoveredDialogOpen}
-        onClose={() => setVehicleRecoveredDialogOpen(false)}
+        open={closeCaseDialogOpen}
+        onClose={() => {
+          setCloseCaseDialogOpen(false);
+          setCloseCaseReason('');
+        }}
         PaperProps={{
           sx: {
             backgroundColor: modeColors.background.paper,
@@ -1443,23 +1450,65 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
       >
         <DialogContent sx={{ p: 3 }}>
           <Typography variant="h5" sx={{ color: modeColors.text.primary, mb: 2 }}>
-            Vehicle Recovered
+            Close Case
           </Typography>
           <Typography variant="body2" sx={{ color: modeColors.text.secondary, mb: 3 }}>
-            Please confirm this vehicle is recovered. Once you select confirm this case will be closed and unavailable within the system.
+            Once you select confirm this case will be closed and unavailable within the system.
           </Typography>
+
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <InputLabel
+              id="close-case-reason-label"
+              sx={{
+                color: modeColors.text.secondary,
+                '&.Mui-focused': { color: '#00BFA5' },
+              }}
+            >
+              Choose a reason
+            </InputLabel>
+            <Select
+              labelId="close-case-reason-label"
+              value={closeCaseReason}
+              label="Choose a reason"
+              onChange={(e) => setCloseCaseReason(e.target.value)}
+              sx={{
+                color: modeColors.text.primary,
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: modeColors.border,
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#00BFA5',
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#00BFA5',
+                },
+                '& .MuiSvgIcon-root': {
+                  color: modeColors.text.secondary,
+                },
+              }}
+            >
+              <MenuItem value="vehicle_recovered">Vehicle Recovered</MenuItem>
+              <MenuItem value="bad_location">Vehicle Reporting Bad Location</MenuItem>
+            </Select>
+          </FormControl>
+
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
             <Button
-              onClick={() => setVehicleRecoveredDialogOpen(false)}
+              onClick={() => {
+                setCloseCaseDialogOpen(false);
+                setCloseCaseReason('');
+              }}
               sx={{ color: modeColors.text.secondary }}
             >
               Cancel
             </Button>
             <Button
               variant="contained"
+              disabled={!closeCaseReason}
               onClick={() => {
-                // TODO: Handle vehicle recovered confirmation
-                setVehicleRecoveredDialogOpen(false);
+                // TODO: Handle close case confirmation with reason
+                setCloseCaseDialogOpen(false);
+                setCloseCaseReason('');
                 handleBackToList();
               }}
               sx={{
@@ -1469,6 +1518,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
                 px: 3,
                 '&:hover': {
                   backgroundColor: '#00a893',
+                },
+                '&.Mui-disabled': {
+                  backgroundColor: modeColors.buttonGray,
+                  color: modeColors.text.secondary,
                 },
               }}
             >
