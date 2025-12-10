@@ -1185,10 +1185,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           top: 64,
           left: 0,
           right: { xs: 0, sm: drawerWidth },
-          bottom: 0,
+          bottom: { xs: mobileDetailOpen ? '50vh' : 0, sm: 0 },
           backgroundColor: modeColors.background.default,
           overflow: 'hidden',
           touchAction: 'manipulation',
+          transition: 'bottom 0.3s ease',
         }}
       >
         <VehicleMap
@@ -1234,34 +1235,28 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           open={mobileDetailOpen && isMobile}
           onClose={handleBackToList}
           onOpen={() => {}}
-          swipeAreaWidth={20}
-          disableSwipeToOpen={false}
+          swipeAreaWidth={0}
+          disableSwipeToOpen={true}
           hideBackdrop={true}
           ModalProps={{
             keepMounted: true,
             hideBackdrop: true,
             disableScrollLock: true,
-            sx: {
-              pointerEvents: 'none',
-            },
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            pointerEvents: 'none',
             '& .MuiDrawer-paper': {
-              pointerEvents: 'auto',
               height: '50vh',
               maxHeight: '90vh',
               borderTopLeftRadius: 16,
               borderTopRightRadius: 16,
               backgroundColor: modeColors.background.nav,
-              overflow: 'visible',
-              transition: 'height 0.3s ease',
+              overflow: 'hidden',
               boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.5)',
             },
           }}
         >
-          {/* Drag handle - touchable area for dragging */}
+          {/* Drag handle indicator */}
           <Box
             sx={{
               width: '100%',
@@ -1269,8 +1264,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
               justifyContent: 'center',
               pt: 1.5,
               pb: 1,
-              cursor: 'grab',
-              touchAction: 'none',
             }}
           >
             <Box
