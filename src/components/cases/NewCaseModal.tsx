@@ -159,6 +159,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ open, onClose }) => 
                 inputProps={{ maxLength: 17 }}
                 helperText={`${vin.length}/17 characters`}
                 size="small"
+                autoFocus
               />
               <Button
                 variant="contained"
@@ -304,6 +305,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ open, onClose }) => 
                 hidden
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                 onChange={handleFileChange}
+                aria-label="Upload supporting document"
               />
               <UploadIcon sx={{ fontSize: 48, color: '#8892a0', mb: 2 }} />
               <Typography variant="body1" sx={{ color: '#ffffff', mb: 1 }}>
@@ -372,10 +374,10 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ open, onClose }) => 
     <>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6" fontWeight="600">
+        <Typography variant="h6" fontWeight="600" id="new-case-dialog-title">
           Create New Case
         </Typography>
-        <IconButton onClick={handleClose} sx={{ color: '#8892a0' }}>
+        <IconButton onClick={handleClose} aria-label="Close dialog" sx={{ color: '#8892a0' }}>
           <CloseIcon />
         </IconButton>
       </Box>
@@ -479,6 +481,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ open, onClose }) => 
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
+      aria-labelledby="new-case-dialog-title"
       PaperProps={{
         sx: {
           backgroundColor: '#1a2332',

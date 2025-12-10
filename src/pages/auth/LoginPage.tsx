@@ -85,7 +85,7 @@ export const LoginPage: React.FC = () => {
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
+            <Alert severity="error" sx={{ mb: 3 }} role="alert">
               {error}
             </Alert>
           )}
@@ -127,6 +127,7 @@ export const LoginPage: React.FC = () => {
                     <IconButton
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>

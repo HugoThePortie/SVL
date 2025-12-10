@@ -69,26 +69,26 @@ type CaseStatus = 'active' | 'requested' | 'inactive';
 const getStatusIcon = (status: CaseStatus) => {
   switch (status) {
     case 'active':
-      return <CarIcon sx={{ color: '#49B27E', fontSize: 20 }} />;
+      return <CarIcon sx={{ color: colors.status.active, fontSize: 20 }} />;
     case 'requested':
-      return <DownloadIcon sx={{ color: '#F5A623', fontSize: 20 }} />;
+      return <DownloadIcon sx={{ color: colors.status.requested, fontSize: 20 }} />;
     case 'inactive':
-      return <CloseIcon sx={{ color: '#FF5252', fontSize: 20 }} />;
+      return <CloseIcon sx={{ color: colors.status.inactive, fontSize: 20 }} />;
     default:
-      return <CarIcon sx={{ color: '#49B27E', fontSize: 20 }} />;
+      return <CarIcon sx={{ color: colors.status.active, fontSize: 20 }} />;
   }
 };
 
 const getStatusColor = (status: CaseStatus) => {
   switch (status) {
     case 'active':
-      return '#49B27E';
+      return colors.status.active;
     case 'requested':
-      return '#F5A623';
+      return colors.status.requested;
     case 'inactive':
-      return '#FF5252';
+      return colors.status.inactive;
     default:
-      return '#49B27E';
+      return colors.status.active;
   }
 };
 
@@ -256,6 +256,15 @@ export const DashboardPage: React.FC = () => {
             <Box
               key={caseItem.id}
               onClick={() => navigate(`/cases/${caseItem.id}`)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(`/cases/${caseItem.id}`);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`Case ${caseItem.caseNumber}, ${caseItem.vehicle}, Status: ${caseItem.status}, Time: ${caseItem.timeAtLocation}`}
               sx={{
                 backgroundColor: modeColors.background.card,
                 borderRadius: '10px',
@@ -263,9 +272,14 @@ export const DashboardPage: React.FC = () => {
                 cursor: 'pointer',
                 border: `1px solid ${modeColors.border}`,
                 transition: 'all 0.2s ease',
-                '&:hover': {
+                '&:hover, &:focus': {
                   borderColor: '#00BFA5',
                   backgroundColor: modeColors.background.cardHover,
+                  outline: 'none',
+                },
+                '&:focus-visible': {
+                  outline: '2px solid #00BFA5',
+                  outlineOffset: '2px',
                 },
               }}
             >

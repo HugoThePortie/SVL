@@ -160,13 +160,13 @@ export const VehicleMap: React.FC<VehicleMapProps> = ({
   const getMarkerColor = () => {
     switch (status) {
       case 'active':
-        return '#49B27E';
+        return colors.status.active;
       case 'requested':
-        return '#F5A623';
+        return colors.status.requested;
       case 'inactive':
-        return '#FF5252';
+        return colors.status.inactive;
       default:
-        return '#49B27E';
+        return colors.status.active;
     }
   };
 
@@ -281,6 +281,7 @@ export const VehicleMap: React.FC<VehicleMapProps> = ({
                   <IconButton
                     size="small"
                     onClick={() => copyToClipboard(historyLocation.lat, historyLocation.lng)}
+                    aria-label="Copy coordinates to clipboard"
                     sx={{
                       p: 0.25,
                       color: modeColors.text.secondary,
@@ -317,6 +318,7 @@ export const VehicleMap: React.FC<VehicleMapProps> = ({
                     <IconButton
                       size="small"
                       onClick={() => copyToClipboard(location.lat, location.lng)}
+                      aria-label="Copy coordinates to clipboard"
                       sx={{
                         p: 0.25,
                         color: modeColors.text.secondary,

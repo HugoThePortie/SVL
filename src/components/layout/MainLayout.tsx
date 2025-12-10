@@ -302,26 +302,26 @@ const mockCases: CaseData[] = [
 const getStatusIcon = (status: CaseStatus) => {
   switch (status) {
     case 'active':
-      return <CarIcon sx={{ color: '#49B27E', fontSize: 20 }} />;
+      return <CarIcon sx={{ color: colors.status.active, fontSize: 20 }} />;
     case 'requested':
-      return <DownloadIcon sx={{ color: '#F5A623', fontSize: 20 }} />;
+      return <DownloadIcon sx={{ color: colors.status.requested, fontSize: 20 }} />;
     case 'inactive':
-      return <CloseIcon sx={{ color: '#FF5252', fontSize: 20 }} />;
+      return <CloseIcon sx={{ color: colors.status.inactive, fontSize: 20 }} />;
     default:
-      return <CarIcon sx={{ color: '#49B27E', fontSize: 20 }} />;
+      return <CarIcon sx={{ color: colors.status.active, fontSize: 20 }} />;
   }
 };
 
 const getStatusColor = (status: CaseStatus) => {
   switch (status) {
     case 'active':
-      return '#49B27E';
+      return colors.status.active;
     case 'requested':
-      return '#F5A623';
+      return colors.status.requested;
     case 'inactive':
-      return '#FF5252';
+      return colors.status.inactive;
     default:
-      return '#49B27E';
+      return colors.status.active;
   }
 };
 
@@ -773,6 +773,15 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
             <Box
               key={caseItem.id}
               onClick={() => handleCaseSelect(caseItem)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleCaseSelect(caseItem);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`Case ${caseItem.caseNumber}, ${caseItem.vehicle}, Status: ${caseItem.status}, Time: ${caseItem.timeAtLocation}`}
               sx={{
                 backgroundColor: modeColors.background.card,
                 borderRadius: '10px',
@@ -782,9 +791,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
                 cursor: 'pointer',
                 border: `1px solid ${modeColors.border}`,
                 transition: 'all 0.2s ease',
-                '&:hover': {
+                '&:hover, &:focus': {
                   borderColor: '#00BFA5',
                   backgroundColor: modeColors.background.cardHover,
+                  outline: 'none',
+                },
+                '&:focus-visible': {
+                  outline: '2px solid #00BFA5',
+                  outlineOffset: '2px',
                 },
               }}
             >
@@ -851,11 +865,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
     <Box sx={{ backgroundColor: modeColors.background.nav, height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
       {/* Header with title and close button */}
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h6" sx={{ color: modeColors.text.primary, fontWeight: 600 }}>
+        <Typography variant="h6" sx={{ color: modeColors.text.primary, fontWeight: 600 }} id="case-details-title">
           Case Details
         </Typography>
         <IconButton
           onClick={handleBackToList}
+          aria-label="Close case details"
           sx={{ color: modeColors.text.secondary, p: 0.5, '&:hover': { color: modeColors.text.primary } }}
         >
           <CloseIcon />
@@ -908,6 +923,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
               <IconButton
                 size="small"
                 onClick={handleCopyVin}
+                aria-label="Copy VIN to clipboard"
                 sx={{ color: modeColors.text.secondary, p: 0.25 }}
               >
                 <CopyIcon sx={{ fontSize: 14 }} />
@@ -1038,6 +1054,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           <IconButton
             color="inherit"
             onClick={() => navigate('/dashboard')}
+            aria-label="Go to dashboard"
             sx={{
               mr: 1,
               backgroundColor: location.pathname === '/dashboard' ? 'rgba(0, 191, 165, 0.15)' : 'transparent',
@@ -1063,6 +1080,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           <IconButton
             color="inherit"
             onClick={(e) => setSettingsAnchor(e.currentTarget)}
+            aria-label="Open settings menu"
+            aria-haspopup="true"
+            aria-expanded={Boolean(settingsAnchor)}
             sx={{ mr: 1 }}
           >
             <SettingsIcon />
@@ -1116,8 +1136,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
             </MenuItem>
           </Menu>
 
-          <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0, ml: 1 }}>
-            <Avatar sx={{ bgcolor: modeColors.buttonGray }}>
+          <IconButton
+            onClick={handleProfileMenuOpen}
+            aria-label="Open profile menu"
+            aria-haspopup="true"
+            aria-expanded={Boolean(anchorEl)}
+            sx={{ p: 0, ml: 1 }}
+          >
+            <Avatar sx={{ bgcolor: modeColors.buttonGray }} aria-hidden="true">
               {profileName.charAt(0).toUpperCase()}
             </Avatar>
           </IconButton>
@@ -1276,6 +1302,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
         onClose={() => setMembersDialogOpen(false)}
         maxWidth="sm"
         fullWidth
+        aria-labelledby="members-dialog-title"
         PaperProps={{
           sx: {
             backgroundColor: modeColors.background.paper,
@@ -1284,9 +1311,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           },
         }}
       >
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="h6">Case Members</Typography>
-          <IconButton onClick={() => setMembersDialogOpen(false)} sx={{ color: modeColors.text.secondary }}>
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} id="members-dialog-title">
+          <Typography variant="h6" component="span">Case Members</Typography>
+          <IconButton onClick={() => setMembersDialogOpen(false)} aria-label="Close dialog" sx={{ color: modeColors.text.secondary }}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
@@ -1336,6 +1363,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
               value={newMemberEmail}
               onChange={(e) => setNewMemberEmail(e.target.value)}
               size="small"
+              autoFocus
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: modeColors.border },
@@ -1401,6 +1429,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           setCloseCaseDialogOpen(false);
           setCloseCaseReason('');
         }}
+        aria-labelledby="close-case-dialog-title"
         PaperProps={{
           sx: {
             backgroundColor: modeColors.background.paper,
@@ -1411,14 +1440,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
         }}
       >
         <DialogContent sx={{ p: 3 }}>
-          <Typography variant="h5" sx={{ color: modeColors.text.primary, mb: 2 }}>
+          <Typography variant="h5" sx={{ color: modeColors.text.primary, mb: 2 }} id="close-case-dialog-title">
             Close Case
           </Typography>
           <Typography variant="body2" sx={{ color: modeColors.text.secondary, mb: 3 }}>
             Once you select confirm this case will be closed and unavailable within the system.
           </Typography>
 
-          <FormControl fullWidth sx={{ mb: 3 }}>
+          <FormControl fullWidth sx={{ mb: 3 }} autoFocus>
             <InputLabel
               id="close-case-reason-label"
               sx={{

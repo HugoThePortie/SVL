@@ -197,6 +197,10 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           value={phoneNumber}
           onChange={handlePhoneChange}
           placeholder="1-XXX-XXX-XXXX"
+          inputProps={{
+            type: 'tel',
+            autoComplete: 'tel',
+          }}
           sx={{
             '& .MuiInput-root': {
               color: modeColors.text.primary,
@@ -260,6 +264,11 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           value={otpCode}
           onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
           placeholder="Enter 6-digit code"
+          inputProps={{
+            inputMode: 'numeric',
+            autoComplete: 'one-time-code',
+            maxLength: 6,
+          }}
           sx={{
             '& .MuiInput-root': {
               color: modeColors.text.primary,
@@ -311,15 +320,15 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         {currentStep !== 'settings' ? (
-          <IconButton onClick={handleBack} sx={{ color: modeColors.text.primary, ml: -1 }}>
+          <IconButton onClick={handleBack} aria-label="Go back" sx={{ color: modeColors.text.primary, ml: -1 }}>
             <ArrowBackIcon />
           </IconButton>
         ) : (
-          <Typography variant="h6" fontWeight="600">
+          <Typography variant="h6" fontWeight="600" id="notification-settings-title">
             Notification Settings
           </Typography>
         )}
-        <IconButton onClick={handleClose} sx={{ color: '#8892a0' }}>
+        <IconButton onClick={handleClose} aria-label="Close notification settings" sx={{ color: '#8892a0' }}>
           <CloseIcon />
         </IconButton>
       </Box>
@@ -428,6 +437,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
+      aria-labelledby="notification-settings-title"
       PaperProps={{
         sx: {
           backgroundColor: '#1a2332',

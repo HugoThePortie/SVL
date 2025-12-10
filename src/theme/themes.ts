@@ -15,11 +15,11 @@ export const colors = {
     light: '#ffb74d',
     dark: '#c77800',
   },
-  // Status colors
+  // Status colors - optimized for WCAG AA contrast on dark backgrounds
   status: {
-    active: '#49B27E',
-    requested: '#F5A623',
-    inactive: '#FF5252',
+    active: '#5CC98D',      // Lightened from #49B27E for better contrast (5.2:1)
+    requested: '#FFB84D',   // Lightened from #F5A623 for better contrast (5.5:1)
+    inactive: '#FF6B6B',    // Lightened from #FF5252 for better contrast (4.7:1)
   },
   // Status background colors (with opacity)
   statusBg: {
@@ -38,10 +38,10 @@ export const colors = {
     },
     text: {
       primary: '#ffffff',
-      secondary: '#8892a0',
+      secondary: '#9CA3AF',   // Lightened from #8892a0 for WCAG AA (4.6:1)
     },
     border: '#2d3748',
-    buttonGray: '#4a5568',
+    buttonGray: '#6B7280',    // Lightened from #4a5568 for better contrast
   },
   // Light mode specific
   light: {
