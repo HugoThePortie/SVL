@@ -34,7 +34,6 @@ import {
   Select,
 } from '@mui/material';
 import {
-  Menu as MenuIcon,
   Dashboard as DashboardIcon,
   DirectionsCar as CarIcon,
   Person as PersonIcon,
@@ -391,7 +390,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
     </Box>
   );
 
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCase, setSelectedCase] = useState<CaseData | null>(null);
@@ -420,10 +418,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -443,7 +437,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
     setCaseSettings(caseItem.settings || null);
     setCaseMembers(caseItem.members || []);
     if (isMobile) {
-      setMobileOpen(false); // Close the cases list drawer
       setMobileDetailOpen(true); // Open the case details bottom sheet
     }
   };
@@ -453,9 +446,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
     setCaseSettings(null);
     setCaseMembers([]);
     setMobileDetailOpen(false);
-    if (isMobile) {
-      setMobileOpen(true); // Reopen the cases list on mobile
-    }
   };
 
   const handleAddMember = () => {
@@ -1132,16 +1122,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
             </Avatar>
           </IconButton>
 
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="end"
-            onClick={handleDrawerToggle}
-            sx={{ ml: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -1176,7 +1156,25 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
         </Toolbar>
       </AppBar>
 
-      {/* Main content - Map fills the space left of the drawer */}
+      {/* Mobile: Full-width cases list when no case selected */}
+      {isMobile && !selectedCase && (
+        <Box
+          component="main"
+          sx={{
+            position: 'fixed',
+            top: 64,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: modeColors.background.nav,
+            overflow: 'hidden',
+          }}
+        >
+          {casesListContent}
+        </Box>
+      )}
+
+      {/* Map - Desktop: always visible, Mobile: only when case selected */}
       <Box
         component="main"
         sx={{
@@ -1189,6 +1187,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           overflow: 'hidden',
           touchAction: 'manipulation',
           transition: 'bottom 0.3s ease',
+          display: { xs: selectedCase ? 'block' : 'none', sm: 'block' },
         }}
       >
         <VehicleMap
@@ -1206,28 +1205,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
       <Box
         component="nav"
       >
-        {/* Mobile: Temporary drawer for cases list */}
-        <Drawer
-          variant="temporary"
-          anchor="right"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
-              backgroundColor: modeColors.background.nav,
-              borderLeft: `1px solid ${modeColors.border}`,
-            },
-          }}
-        >
-          {casesListContent}
-        </Drawer>
-
         {/* Mobile: Bottom sheet for case details */}
         <Drawer
           variant="persistent"
