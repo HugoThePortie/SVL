@@ -1175,31 +1175,33 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
       )}
 
       {/* Map - Desktop: always visible, Mobile: only when case selected */}
-      <Box
-        component="main"
-        sx={{
-          position: 'fixed',
-          top: 64,
-          left: 0,
-          right: { xs: 0, sm: drawerWidth },
-          bottom: { xs: mobileDetailOpen ? '50vh' : 0, sm: 0 },
-          backgroundColor: modeColors.background.default,
-          overflow: 'hidden',
-          touchAction: 'manipulation',
-          transition: 'bottom 0.3s ease',
-          display: { xs: selectedCase ? 'block' : 'none', sm: 'block' },
-        }}
-      >
-        <VehicleMap
-          location={selectedCase?.location}
-          locationHistory={selectedCase?.locationHistory}
-          vehicleName={selectedCase?.vehicle}
-          caseNumber={selectedCase?.caseNumber}
-          status={selectedCase?.status}
-          isMobile={isMobile}
-          themeMode={currentTheme}
-        />
-      </Box>
+      {(!isMobile || selectedCase) && (
+        <Box
+          component="main"
+          sx={{
+            position: 'fixed',
+            top: 64,
+            left: 0,
+            right: { xs: 0, sm: drawerWidth },
+            bottom: { xs: mobileDetailOpen ? '50vh' : 0, sm: 0 },
+            backgroundColor: modeColors.background.default,
+            overflow: 'hidden',
+            touchAction: 'manipulation',
+            transition: 'bottom 0.3s ease',
+          }}
+        >
+          <VehicleMap
+            key={isMobile && selectedCase ? selectedCase.id : 'desktop'}
+            location={selectedCase?.location}
+            locationHistory={selectedCase?.locationHistory}
+            vehicleName={selectedCase?.vehicle}
+            caseNumber={selectedCase?.caseNumber}
+            status={selectedCase?.status}
+            isMobile={isMobile}
+            themeMode={currentTheme}
+          />
+        </Box>
+      )}
 
       {/* Navigation drawer - Desktop: right side */}
       <Box
