@@ -19,7 +19,6 @@ import {
   Fab,
   Switch,
   Button,
-  SwipeableDrawer,
   useMediaQuery,
   useTheme,
   Dialog,
@@ -1230,19 +1229,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
         </Drawer>
 
         {/* Mobile: Bottom sheet for case details */}
-        <SwipeableDrawer
+        <Drawer
+          variant="persistent"
           anchor="bottom"
           open={mobileDetailOpen && isMobile}
-          onClose={handleBackToList}
-          onOpen={() => {}}
-          swipeAreaWidth={0}
-          disableSwipeToOpen={true}
-          hideBackdrop={true}
-          ModalProps={{
-            keepMounted: true,
-            hideBackdrop: true,
-            disableScrollLock: true,
-          }}
           sx={{
             display: { xs: 'block', sm: 'none' },
             '& .MuiDrawer-paper': {
@@ -1256,7 +1246,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
             },
           }}
         >
-          {/* Drag handle indicator */}
+          {/* Handle indicator */}
           <Box
             sx={{
               width: '100%',
@@ -1278,7 +1268,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ currentTheme = 'dark', o
           <Box sx={{ height: 'calc(50vh - 24px)', overflowY: 'auto' }}>
             {caseDetailsContent}
           </Box>
-        </SwipeableDrawer>
+        </Drawer>
 
         {/* Desktop: Permanent drawer */}
         <Drawer
